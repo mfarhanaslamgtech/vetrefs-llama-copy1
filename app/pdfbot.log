@@ -1,0 +1,77 @@
+2024-06-13 17:49:17,012 - ERROR - resources.py - 105 - An error occurred while processing a request
+Traceback (most recent call last):
+  File "/home/abusufyan/development/private_VetRef/app/chatbot/resources.py", line 91, in post
+    answer = self.chatbot.answer_question(user_id, chat_session_id, question)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/app/chatbot/chatbot.py", line 145, in answer_question
+    answer = first_chain.invoke({"question": question})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 166, in invoke
+    raise e
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 156, in invoke
+    self._call(inputs, run_manager=run_manager)
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/conversational_retrieval/base.py", line 167, in _call
+    answer = self.combine_docs_chain.run(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/_api/deprecation.py", line 148, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 605, in run
+    return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/_api/deprecation.py", line 148, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 383, in __call__
+    return self.invoke(
+           ^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 166, in invoke
+    raise e
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 156, in invoke
+    self._call(inputs, run_manager=run_manager)
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/combine_documents/base.py", line 137, in _call
+    output, extra_return_dict = self.combine_docs(
+                                ^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/combine_documents/stuff.py", line 244, in combine_docs
+    return self.llm_chain.predict(callbacks=callbacks, **inputs), {}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/llm.py", line 316, in predict
+    return self(kwargs, callbacks=callbacks)[self.output_key]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/_api/deprecation.py", line 148, in warning_emitting_wrapper
+    return wrapped(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 383, in __call__
+    return self.invoke(
+           ^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 166, in invoke
+    raise e
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/base.py", line 156, in invoke
+    self._call(inputs, run_manager=run_manager)
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/llm.py", line 126, in _call
+    response = self.generate([inputs], run_manager=run_manager)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain/chains/llm.py", line 138, in generate
+    return self.llm.generate_prompt(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/language_models/llms.py", line 633, in generate_prompt
+    return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/language_models/llms.py", line 803, in generate
+    output = self._generate_helper(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/language_models/llms.py", line 670, in _generate_helper
+    raise e
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_core/language_models/llms.py", line 657, in _generate_helper
+    self._generate(
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_community/llms/ollama.py", line 417, in _generate
+    final_chunk = super()._stream_with_aggregation(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_community/llms/ollama.py", line 326, in _stream_with_aggregation
+    for stream_resp in self._create_generate_stream(prompt, stop, **kwargs):
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_community/llms/ollama.py", line 172, in _create_generate_stream
+    yield from self._create_stream(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/abusufyan/development/private_VetRef/pri_env/lib/python3.11/site-packages/langchain_community/llms/ollama.py", line 244, in _create_stream
+    raise OllamaEndpointNotFoundError(
+langchain_community.llms.ollama.OllamaEndpointNotFoundError: Ollama call failed with status code 404. Maybe your model is not found and you should pull the model with `ollama pull llama3:8b`.

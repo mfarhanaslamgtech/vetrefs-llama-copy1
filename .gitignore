@@ -1,0 +1,5 @@
+# Ignore virtual environment directory
+pri_env/
+
+# Ignore other untracked files or directories
+vectordb/

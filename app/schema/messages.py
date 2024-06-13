@@ -1,0 +1,2 @@
+# Define message schema classes
+
