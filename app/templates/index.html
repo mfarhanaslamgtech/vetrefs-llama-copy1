@@ -316,7 +316,6 @@
             <div class="button-row">
               <button class="btn btn-secondary" id="clearBtn" type="button">Clear</button>
               <button class="btn btn-secondary" id="analyzeBtn" type="button">Future Diagnose</button>
-              <button class="btn btn-primary" id="sendBtn" type="submit"><span id="sendSpinner" class="spinner" style="display:none"></span><span id="sendLabel">Send</span></button>
             </div>
           </div>
         </form>
@@ -349,10 +348,7 @@
   const emptyState = document.getElementById('emptyState');
   const kbStatus = document.getElementById('kbStatus');
   const kbStatusText = document.getElementById('kbStatusText');
-  const sendBtn = document.getElementById('sendBtn');
   const analyzeBtn = document.getElementById('analyzeBtn');
-  const sendLabel = document.getElementById('sendLabel');
-  const sendSpinner = document.getElementById('sendSpinner');
   const clearBtn = document.getElementById('clearBtn');
   const footerHint = document.getElementById('footerHint');
   const evidenceList = document.getElementById('evidenceList');
@@ -390,7 +386,7 @@
   initializeWelcome();
 
   newChatBtn.addEventListener('click', () => {
-    if (!sendBtn.disabled) window.location.reload();
+    window.location.reload();
   });
 
   function pad(n){ return String(n).padStart(3,'0'); }
@@ -399,11 +395,8 @@
   }
 
   function setBusy(isBusy){
-    sendBtn.disabled = isBusy;
     analyzeBtn.disabled = isBusy;
     clearBtn.disabled = isBusy;
-    sendSpinner.style.display = isBusy ? 'inline-block' : 'none';
-    sendLabel.textContent = isBusy ? 'Sending' : 'Send';
     kbStatus.className = 'kb-status' + (isBusy ? ' busy' : '');
     kbStatusText.textContent = isBusy ? 'Retrieving and generating' : 'Knowledge base ready';
   }
