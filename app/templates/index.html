@@ -235,10 +235,17 @@
   .btn:active{transform:translateY(0);}
   .btn-primary{color:#EFF6EC;background:var(--sage-deep);}
   .btn-primary:hover{background:var(--sage);}
-  .send-btn{position:relative;overflow:hidden;min-width:112px;color:#fff;background:linear-gradient(135deg,#12324D,#2D6A9F);box-shadow:0 5px 16px rgba(18,50,77,.22);}
-  .send-btn:hover{background:linear-gradient(135deg,#2D6A9F,#12324D);}
-  .send-icon{display:inline-block;margin-right:7px;transition:transform 180ms ease;}
-  .send-btn:hover .send-icon{transform:translateX(3px);}
+  .diagnose-btn{position:relative;overflow:hidden;min-width:190px;color:#fff;background:linear-gradient(135deg,#12324D,#2D6A9F);box-shadow:0 5px 16px rgba(18,50,77,.22);letter-spacing:.01em;}
+  .diagnose-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.28) 50%,transparent 75%);transform:translateX(-120%);}
+  .diagnose-btn:not([disabled])::before{animation:diagnose-shimmer 2.8s ease-in-out infinite;}
+  .diagnose-btn.is-busy{background:linear-gradient(135deg,#C77B30,#B34C4C);}
+  .diagnose-btn .diagnose-icon,.diagnose-btn .diagnose-label,.diagnose-btn .diagnose-progress{position:relative;z-index:1;}
+  .diagnose-icon{display:inline-block;margin-right:7px;}
+  .diagnose-btn.is-busy .diagnose-icon{animation:diagnose-pulse 900ms ease-in-out infinite alternate;}
+  .diagnose-progress{display:none;width:12px;height:12px;margin-left:7px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;vertical-align:-2px;}
+  .diagnose-btn.is-busy .diagnose-progress{display:inline-block;animation:spin 700ms linear infinite;}
+  @keyframes diagnose-shimmer{50%,100%{transform:translateX(120%);}}
+  @keyframes diagnose-pulse{to{transform:scale(1.2);}}
   .btn-secondary{color:var(--ink-soft);background:transparent;border:1px solid var(--rule-strong);}
   .btn-secondary:hover{background:var(--paper-sunken);}
   .btn[disabled]{opacity:0.55;cursor:not-allowed;transform:none;}
@@ -316,10 +323,10 @@
             <textarea id="question" placeholder="Ask about diagnosis, treatment, differentials, or dosing..."></textarea>
           </div>
           <div class="composer-actions">
-            <div class="helper" id="helperText">Press Enter to send. Use Shift+Enter for a new line.</div>
+            <div class="helper" id="helperText">Press Enter or use the button to analyze five possible diagnoses. Use Shift+Enter for a new line.</div>
             <div class="button-row">
               <button class="btn btn-secondary" id="clearBtn" type="button">Clear</button>
-              <button class="btn btn-primary send-btn" id="sendBtn" type="submit"><span class="send-icon">➤</span><span>Send</span></button>
+              <button class="btn btn-primary diagnose-btn" id="analyzeBtn" type="button"><span class="diagnose-icon">✦</span><span class="diagnose-label" id="analyzeLabel">Analyze 5 diagnoses</span><span class="diagnose-progress" aria-hidden="true"></span></button>
             </div>
           </div>
         </form>
@@ -353,7 +360,8 @@
   const emptyState = document.getElementById('emptyState');
   const kbStatus = document.getElementById('kbStatus');
   const kbStatusText = document.getElementById('kbStatusText');
-  const sendBtn = document.getElementById('sendBtn');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const analyzeLabel = document.getElementById('analyzeLabel');
   const clearBtn = document.getElementById('clearBtn');
   const footerHint = document.getElementById('footerHint');
   const evidenceList = document.getElementById('evidenceList');
@@ -400,7 +408,9 @@
   }
 
   function setBusy(isBusy){
-    sendBtn.disabled = isBusy;
+    analyzeBtn.disabled = isBusy;
+    analyzeBtn.classList.toggle("is-busy", isBusy);
+    analyzeLabel.textContent = isBusy ? "Analyzing 5 diagnoses…" : "Analyze 5 diagnoses";
     clearBtn.disabled = isBusy;
     kbStatus.className = 'kb-status' + (isBusy ? ' busy' : '');
     kbStatusText.textContent = isBusy ? 'Retrieving and generating' : 'Atlas knowledge base ready';
@@ -696,126 +706,49 @@
       + (flags ? '\n\n## Red flags\n\n' + flags : '') + footer;
   }
 
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const user_id = Number(userIdInput.value || 1);
-    const sessionRaw = sessionInput.value.trim();
-    const question = questionInput.value.trim();
-
-    if (!question){
+  analyzeBtn.addEventListener('click', async () => {
+    const caseText = questionInput.value.trim();
+    if (!caseText){
       kbStatus.className = 'kb-status error';
-      kbStatusText.textContent = 'Enter a question first';
+      kbStatusText.textContent = 'Enter a SOAP note first';
       return;
     }
-
-    const payload = { user_id, question, chat_session_id: sessionRaw ? Number(sessionRaw) : null };
-
-    addEntry('user', question);
-    const pending = addEntry('assistant', 'Retrieving context and drafting a response...');
+    addEntry('user', caseText);
+    const pending = addEntry('assistant', 'Retrieving book evidence and ranking five possible diagnoses...');
     pending.p.classList.add('thinking');
     setBusy(true);
-    footerHint.textContent = 'Streaming response from /v1/chatbot/stream.';
+    footerHint.textContent = 'Clinical assessment from /v1/chatbot/analyze.';
     questionInput.value = '';
-
     try {
-      const response = await fetch('/v1/chatbot/stream', {
+      const response = await fetch('/v1/chatbot/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ case_text: caseText })
       });
-
-      if (!response.ok || !response.body){
-        pending.row.remove();
-        addEntry('error', 'The streaming request failed.');
-        kbStatus.className = 'kb-status error';
-        kbStatusText.textContent = 'Request failed';
-        return;
+      const data = await response.json();
+      if (!response.ok){
+        throw new Error(data.detail || data.error?.message || 'Clinical analysis failed.');
       }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let streamedAnswer = '';
-      let currentSources = [];
-      pending.p.textContent = 'Connecting to retrieval pipeline...';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          const event = JSON.parse(line);
-
-          if (event.type === 'session' && event.chat_session_id) {
-            sessionInput.value = event.chat_session_id;
-          }
-
-          if (event.type === 'status') {
-            kbStatusText.textContent = event.message;
-            if (!streamedAnswer) {
-              pending.p.classList.add('thinking');
-              pending.p.textContent = event.message + '...';
-            }
-          }
-
-          if (event.type === 'sources') {
-            currentSources = extractSources(event);
-            renderReferenceStrip(pending.references, currentSources);
-            renderEvidence(currentSources);
-            if (!streamedAnswer) {
-              pending.p.classList.add('thinking');
-              pending.p.textContent = currentSources.length
-                ? 'Found ' + currentSources.length + ' retrieved source' + (currentSources.length > 1 ? 's' : '') + '. Generating answer...'
-                : 'No source chunks returned yet. Generating answer...';
-            }
-          }
-
-          if (event.type === 'chunk') {
-            streamedAnswer += event.text || '';
-            pending.p.classList.remove('thinking');
-            renderMarkdown(pending.p, streamedAnswer);
-            thread.scrollTop = thread.scrollHeight;
-          }
-
-          if (event.type === 'done') {
-            streamedAnswer = event.answer || streamedAnswer;
-            currentSources = extractSources(event);
-            renderMarkdown(pending.p, streamedAnswer);
-            renderReferenceStrip(pending.references, currentSources);
-            renderEvidence(currentSources);
-            if (event.chat_session_id) sessionInput.value = event.chat_session_id;
-          }
-
-          if (event.type === 'error') {
-            pending.row.remove();
-            addEntry('error', event.error?.message || 'The request failed.');
-            kbStatus.className = 'kb-status error';
-            kbStatusText.textContent = event.error?.code ? ('Error: ' + event.error.code) : 'Request failed';
-            footerHint.textContent = 'Nothing was retrieved for this entry.';
-            return;
-          }
-        }
-      }
-
+      const sources = extractSources(data);
+      renderMarkdown(pending.p, renderClinicalAssessment(data));
+      renderReferenceStrip(pending.references, sources);
+      renderEvidence(sources);
       kbStatus.className = 'kb-status';
-      kbStatusText.textContent = 'Atlas knowledge base ready';
-      footerHint.textContent = currentSources.length
-        ? currentSources.length + ' source' + (currentSources.length > 1 ? 's' : '') + ' pinned to the evidence drawer.'
-        : 'Answer generated. No source passages were returned.';
+      kbStatusText.textContent = 'Clinical assessment ready';
+      footerHint.textContent = 'Five possible diagnoses ranked using retrieved book evidence.';
     } catch (err) {
       pending.row.remove();
-      addEntry('error', 'Could not reach the server. Check that the backend is running and try again.');
+      addEntry('error', err.message || 'Clinical analysis failed.');
       kbStatus.className = 'kb-status error';
-      kbStatusText.textContent = 'Offline';
-      footerHint.textContent = 'Network error while calling the backend.';
+      kbStatusText.textContent = 'Analysis failed';
     } finally {
       setBusy(false);
     }
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    analyzeBtn.click();
   });
 </script>
 </body>
