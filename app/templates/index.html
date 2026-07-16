@@ -300,8 +300,8 @@
         <div class="empty" id="emptyState">
           <div class="empty-card">
             <p class="eyebrow" id="welcomeEyebrow">New consult</p>
-            <h2 id="welcomeTitle">Ask a clinical question</h2>
-            <p id="welcomeCopy">Atlas Acorn Vet brings evidence-led veterinary knowledge into one focused workspace. Passages the assistant actually used show up as numbered marks in the text, with the source itself pinned in the evidence drawer on the right.</p>
+            <h2 id="welcomeTitle">What should we investigate?</h2>
+            <p id="welcomeCopy">Paste a case transcript or describe the patient’s symptoms. Atlas Acorn Vet will return five evidence-grounded possible diagnoses, with supporting passages in the evidence drawer.</p>
           </div>
         </div>
       </section>
@@ -391,8 +391,8 @@
     if (returning) {
       welcomeEyebrow.textContent = 'Welcome back';
       welcomeTitle.textContent = 'How can I help?';
-      welcomeCopy.textContent = 'Atlas Acorn Vet is ready. Enter a clinical question to retrieve relevant book evidence and receive a grounded response.';
-      footerHint.textContent = 'Enter a clinical question to retrieve relevant evidence.';
+      welcomeCopy.textContent = 'Paste a case transcript or describe symptoms to receive five evidence-grounded possible diagnoses from the veterinary reference library.';
+      footerHint.textContent = 'Enter a case transcript or symptoms to retrieve diagnosis evidence.';
     }
   }
 
