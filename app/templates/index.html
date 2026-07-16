@@ -3,29 +3,29 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VetPedia — Clinical Retrieval Console</title>
+<title>Atlas Vet — Clinical Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F3F4EC;
-    --paper-raised:#FBFBF6;
-    --paper-sunken:#EBEDE1;
-    --ink:#1F2B22;
-    --ink-soft:#5B6B5C;
-    --ink-faint:#8B968A;
-    --rule:#D9DECC;
-    --rule-strong:#C6CDB6;
-    --sage:#3F6148;
-    --sage-deep:#2C4732;
-    --sage-tint:#E4EBDE;
-    --slate:#33546A;
-    --slate-tint:#E3EBEF;
-    --gold:#A9762F;
-    --gold-tint:#F1E5CE;
-    --brick:#9A4232;
-    --brick-tint:#F2E0DA;
+    --paper:#F4F7FB;
+    --paper-raised:#FFFFFF;
+    --paper-sunken:#EAF0F6;
+    --ink:#172337;
+    --ink-soft:#52647B;
+    --ink-faint:#8A99AB;
+    --rule:#D7E0EA;
+    --rule-strong:#B9C8D8;
+    --sage:#2D6A9F;
+    --sage-deep:#12324D;
+    --sage-tint:#DCEAF5;
+    --slate:#8B4C5D;
+    --slate-tint:#F3E4E8;
+    --gold:#C77B30;
+    --gold-tint:#F8E8D2;
+    --brick:#B34C4C;
+    --brick-tint:#F5DFDF;
     --shadow-card:0 1px 2px rgba(31,43,34,0.06), 0 8px 24px rgba(31,43,34,0.05);
   }
 
@@ -271,15 +271,15 @@
 <div class="app">
   <header class="topbar">
     <div class="brand">
-      <div class="mark">VP</div>
+      <div class="mark">AT</div>
       <div class="brand-copy">
-        <h1>VetPedia</h1>
-        <p>Clinical retrieval console</p>
+        <h1>Atlas Vet</h1>
+        <p>Clinical intelligence desk</p>
       </div>
     </div>
     <div class="topbar-right">
       <button class="new-chat-btn" id="newChatBtn" type="button">New chat</button>
-      <div class="kb-status" id="kbStatus"><span class="dot"></span><span id="kbStatusText">Knowledge base ready</span></div>
+      <div class="kb-status" id="kbStatus"><span class="dot"></span><span id="kbStatusText">Atlas knowledge base ready</span></div>
     </div>
   </header>
 
@@ -290,7 +290,7 @@
           <div class="empty-card">
             <p class="eyebrow" id="welcomeEyebrow">New consult</p>
             <h2 id="welcomeTitle">Ask a clinical question</h2>
-            <p id="welcomeCopy">Every answer is drawn from the veterinary knowledge base. Passages the assistant actually used show up as numbered marks in the text, with the source itself pinned in the evidence drawer on the right.</p>
+            <p id="welcomeCopy">Atlas Vet brings evidence-led veterinary knowledge into one focused workspace. Passages the assistant actually used show up as numbered marks in the text, with the source itself pinned in the evidence drawer on the right.</p>
           </div>
         </div>
       </section>
@@ -328,7 +328,7 @@
         <h3>Retrieved sources</h3>
       </div>
       <div class="evidence-list" id="evidenceList">
-        <p class="evidence-empty" id="evidenceEmpty">Sources will appear here once the assistant retrieves passages for a question.</p>
+        <p class="evidence-empty" id="evidenceEmpty">Atlas sources will appear here once evidence is retrieved for your question.</p>
       </div>
     </aside>
   </main>
@@ -398,7 +398,7 @@
     analyzeBtn.disabled = isBusy;
     clearBtn.disabled = isBusy;
     kbStatus.className = 'kb-status' + (isBusy ? ' busy' : '');
-    kbStatusText.textContent = isBusy ? 'Retrieving and generating' : 'Knowledge base ready';
+    kbStatusText.textContent = isBusy ? 'Retrieving and generating' : 'Atlas knowledge base ready';
   }
 
   function ensureEmptyHidden(){
@@ -562,7 +562,7 @@
     const p = document.createElement('p');
     p.className = 'evidence-empty';
     p.id = 'evidenceEmpty';
-    p.textContent = 'Sources will appear here once the assistant retrieves passages for a question.';
+    p.textContent = 'Atlas sources will appear here once evidence is retrieved for your question.';
     evidenceList.appendChild(p);
   }
 
@@ -837,7 +837,7 @@
       }
 
       kbStatus.className = 'kb-status';
-      kbStatusText.textContent = 'Knowledge base ready';
+      kbStatusText.textContent = 'Atlas knowledge base ready';
       footerHint.textContent = currentSources.length
         ? currentSources.length + ' source' + (currentSources.length > 1 ? 's' : '') + ' pinned to the evidence drawer.'
         : 'Answer generated. No source passages were returned.';
